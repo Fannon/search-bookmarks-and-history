@@ -16,14 +16,12 @@ import { searchTaxonomy } from './taxonomySearch.js'
  * It will decide which approaches and indexes to use.
  */
 export async function search(event) {
+
   try {
     if (event) {
-      // Don't execute search on navigation keys
-      if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Enter' || event.key === 'Escape') {
-        return
-      }
-      // Don't execute search on modifier keys
-      if (event.key === 'Control' || event.key === 'Alt' || event.key === 'Shift') {
+      // Don't execute search on navigation or modifier keys
+      const noNavigationOn = ['ArrowUp', 'ArrowDown', 'Enter', 'Escape', 'Control', 'Alt', 'Shift']
+      if (noNavigationOn.includes(event.key)) {
         return
       }
     }
@@ -42,7 +40,6 @@ export async function search(event) {
     // Get and clean up original search query
     let searchTerm = ext.dom.searchInput.value || ''
     searchTerm = searchTerm.trimStart().toLowerCase()
-    searchTerm = searchTerm.replace(/ +(?= )/g, '') // Remove duplicate spaces
 
     ext.model.result = []
     let searchMode = 'all'
@@ -71,7 +68,7 @@ export async function search(event) {
       searchTerm = searchTerm.substring(1)
     } else if (searchTerm.startsWith('~')) {
       // Tag search
-      searchMode = 'folders'
+      searchMode = 'folder'
       searchTerm = searchTerm.substring(1)
     } else if (ext.opts.customSearchEngines) {
       // Use custom search mode aliases
@@ -102,10 +99,20 @@ export async function search(event) {
     ext.model.searchMode = searchMode
 
     if (searchTerm) {
-      if (searchMode === 'tags') {
-        ext.model.result = searchTaxonomy(searchTerm, 'tags', ext.model.bookmarks)
-      } else if (searchMode === 'folders') {
-        ext.model.result = searchTaxonomy(searchTerm, 'folder', ext.model.bookmarks)
+      if (searchMode === 'tags' || searchMode === 'folder') {
+        const splitSearchTerm = searchTerm.split('  ')
+        if (splitSearchTerm.length === 1 || splitSearchTerm[1].trim() === '') {
+          ext.model.result = searchTaxonomy(searchTerm, searchMode, ext.model.bookmarks)
+        } else {
+          const taxonomyResults = searchTaxonomy(splitSearchTerm[0], searchMode, ext.model.bookmarks)
+          splitSearchTerm.shift()
+          const preSelection = {}
+          for (const el of taxonomyResults) {
+            preSelection[el.originalId] = true
+          }
+          ext.model.result = await searchWithAlgorithm(ext.opts.searchStrategy, splitSearchTerm.join('  ').trim(), searchMode, preSelection)
+        }
+        
       } else if (ext.opts.searchStrategy === 'fuzzy') {
         ext.model.result.push(...(await searchWithAlgorithm('fuzzy', searchTerm, searchMode)))
       } else if (ext.opts.searchStrategy === 'precise') {
@@ -157,12 +164,13 @@ export async function search(event) {
  *
  * @searchApproach 'precise' | 'fuzzy'
  */
-export async function searchWithAlgorithm(searchApproach, searchTerm, searchMode = 'all') {
+export async function searchWithAlgorithm(searchApproach, searchTerm, searchMode = 'all', preSelection) {
   let results = []
   // If the search term is below minMatchCharLength, no point in starting search
   if (searchTerm.length < ext.opts.searchMinMatchCharLength) {
     return results
   }
+  searchTerm = searchTerm.replace(/ +(?= )/g, '') // Remove duplicate spaces
 
   if (ext.opts.debug) {
     performance.mark('search-start')
@@ -172,9 +180,9 @@ export async function searchWithAlgorithm(searchApproach, searchTerm, searchMode
   }
 
   if (searchApproach === 'precise') {
-    results = simpleSearch(searchMode, searchTerm)
+    results = simpleSearch(searchMode, searchTerm, preSelection)
   } else if (searchApproach === 'fuzzy') {
-    results = await fuzzySearch(searchMode, searchTerm)
+    results = await fuzzySearch(searchMode, searchTerm, preSelection)
   } else {
     throw new Error('Unknown search approach: ' + searchApproach)
   }

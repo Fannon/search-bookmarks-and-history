@@ -1,3 +1,6 @@
+if (performance && performance.mark) {
+  performance.mark('init-start')
+}
 import { printError } from './helper/utils.js'
 import { extensionNamespace as ext } from './model/namespace.js'
 import { getEffectiveOptions } from './model/options.js'
@@ -25,11 +28,11 @@ initExtension().catch((err) => {
  * This includes indexing the current bookmarks and history
  */
 export async function initExtension() {
+  
   // Load effective options, including user customizations
   ext.opts = await getEffectiveOptions()
 
   if (ext.opts.debug) {
-    performance.mark('init-start')
     console.debug('Initialized with options', ext.opts)
   }
 

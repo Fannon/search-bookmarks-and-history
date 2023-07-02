@@ -16,9 +16,11 @@ export function resetSimpleSearchState(searchMode) {
   }
 }
 
-export function simpleSearch(searchMode, searchTerm) {
+export function simpleSearch(searchMode, searchTerm, preSelection) {
   let results = []
-  if (searchMode === 'history' || searchMode === 'bookmarks' || searchMode === 'tabs') {
+  if (preSelection) {
+    return simpleSearchWithScoring(searchTerm, 'bookmarks', preSelection)
+  } else if (searchMode === 'history' || searchMode === 'bookmarks' || searchMode === 'tabs') {
     return simpleSearchWithScoring(searchTerm, searchMode)
   } else if (searchMode === 'search') {
     // nothing, because search will be added later
@@ -35,13 +37,18 @@ export function simpleSearch(searchMode, searchTerm) {
  * This does an `includes` search with an AND condition between the terms
  * There is no real scoring, everything has base score of 1
  */
-function simpleSearchWithScoring(searchTerm, searchMode) {
-  const data = ext.model[searchMode]
+function simpleSearchWithScoring(searchTerm, searchMode, preSelection) {
+  let data = ext.model[searchMode]
   if (!data.length) {
     return [] // early return -> no data to search
   }
 
   if (!state[searchMode]) {
+    if (preSelection) {
+      data = data.filter((el) => {
+        return preSelection[el.originalId] 
+      })
+    }
     state[searchMode] = {
       cachedData: [...data],
     }

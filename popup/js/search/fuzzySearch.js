@@ -25,8 +25,10 @@ export function resetFuzzySearchState(searchMode) {
  *
  * @see https://github.com/leeoniya/uFuzzy
  */
-export async function fuzzySearch(searchMode, searchTerm) {
-  if (searchMode === 'history' || searchMode === 'bookmarks' || searchMode === 'tabs') {
+export async function fuzzySearch(searchMode, searchTerm, preSelection) {
+  if (preSelection) {
+    return fuzzySearchWithScoring(searchTerm, 'bookmarks', preSelection)
+  } else if (searchMode === 'history' || searchMode === 'bookmarks' || searchMode === 'tabs') {
     return fuzzySearchWithScoring(searchTerm, searchMode)
   } else if (searchMode === 'search') {
     return []
@@ -42,8 +44,15 @@ export async function fuzzySearch(searchMode, searchTerm) {
 /**
  * Execute a fuzzy search with additional scoring and highlighting of results
  */
-function fuzzySearchWithScoring(searchTerm, searchMode) {
-  const data = ext.model[searchMode]
+function fuzzySearchWithScoring(searchTerm, searchMode, preSelection) {
+  let data = ext.model[searchMode]
+
+  if (preSelection) {
+    data = data.filter((el) => {
+      return preSelection[el.originalId] 
+    })
+    console.log(preSelection, data)
+  }
 
   if (!data.length) {
     return [] // early return
