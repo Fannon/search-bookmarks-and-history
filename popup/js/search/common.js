@@ -16,7 +16,6 @@ import { searchTaxonomy } from './taxonomySearch.js'
  * It will decide which approaches and indexes to use.
  */
 export async function search(event) {
-
   try {
     if (event) {
       // Don't execute search on navigation or modifier keys
@@ -110,9 +109,13 @@ export async function search(event) {
           for (const el of taxonomyResults) {
             preSelection[el.originalId] = true
           }
-          ext.model.result = await searchWithAlgorithm(ext.opts.searchStrategy, splitSearchTerm.join('  ').trim(), searchMode, preSelection)
+          ext.model.result = await searchWithAlgorithm(
+            ext.opts.searchStrategy,
+            splitSearchTerm.join('  ').trim(),
+            searchMode,
+            preSelection,
+          )
         }
-        
       } else if (ext.opts.searchStrategy === 'fuzzy') {
         ext.model.result.push(...(await searchWithAlgorithm('fuzzy', searchTerm, searchMode)))
       } else if (ext.opts.searchStrategy === 'precise') {

@@ -49,7 +49,7 @@ function fuzzySearchWithScoring(searchTerm, searchMode, preSelection) {
 
   if (preSelection) {
     data = data.filter((el) => {
-      return preSelection[el.originalId] 
+      return preSelection[el.originalId]
     })
     console.log(preSelection, data)
   }

@@ -46,7 +46,7 @@ function simpleSearchWithScoring(searchTerm, searchMode, preSelection) {
   if (!state[searchMode]) {
     if (preSelection) {
       data = data.filter((el) => {
-        return preSelection[el.originalId] 
+        return preSelection[el.originalId]
       })
     }
     state[searchMode] = {

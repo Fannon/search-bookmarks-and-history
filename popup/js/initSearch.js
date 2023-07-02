@@ -28,7 +28,6 @@ initExtension().catch((err) => {
  * This includes indexing the current bookmarks and history
  */
 export async function initExtension() {
-  
   // Load effective options, including user customizations
   ext.opts = await getEffectiveOptions()
 
