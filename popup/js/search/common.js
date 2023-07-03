@@ -16,7 +16,6 @@ import { searchTaxonomy } from './taxonomySearch.js'
  * It will decide which approaches and indexes to use.
  */
 export async function search(event) {
-
   try {
     if (event) {
       // Don't execute search on navigation or modifier keys
@@ -103,7 +102,6 @@ export async function search(event) {
         const splitSearchTerm = searchTerm.split('  ')
         const taxonomySearchTerm = splitSearchTerm.shift()
         const subSearchTerm = splitSearchTerm.join('').trim()
-        console.log(taxonomySearchTerm, subSearchTerm)
         if (!subSearchTerm) {
           ext.model.result = searchTaxonomy(searchTerm, searchMode, ext.model.bookmarks)
         } else {
@@ -115,7 +113,6 @@ export async function search(event) {
           console.log('MODE 2')
           ext.model.result = await searchWithAlgorithm(ext.opts.searchStrategy, subSearchTerm, searchMode, preSelection)
         }
-        
       } else if (ext.opts.searchStrategy === 'fuzzy') {
         ext.model.result.push(...(await searchWithAlgorithm('fuzzy', searchTerm, searchMode)))
       } else if (ext.opts.searchStrategy === 'precise') {
@@ -145,9 +142,10 @@ export async function search(event) {
 
     // Only render maxResults if given (to improve render performance)
     // Not applied on tabs, tag and folder search
+    console.log(searchMode)
     if (
       searchMode !== 'tags' &&
-      searchMode !== 'folders' &&
+      searchMode !== 'folder' &&
       searchMode !== 'tabs' &&
       ext.model.result.length > ext.opts.searchMaxResults
     ) {

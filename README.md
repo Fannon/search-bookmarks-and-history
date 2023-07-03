@@ -55,14 +55,16 @@ This extension is built to respect your privacy:
   - Hold `Shift` or `Alt` to open the result in the current tab
   - Hold `Ctrl` to open the result without closing the popup.
 - **Search Modes**: In case you want to be more selective -> use a search mode:
-  - Start your query with `#`: only **bookmarks with the tag** will be returned (exact "starts with" search)
-    - Supports AND search, e.g. search for `#github #pr` to only get results which have both tags
-  - Start your query with `~`: only **bookmarks within the folder** will be returned (exact "starts with" search)
-    - Supports AND search, e.g. search for `~Sites ~Blogs` to only get results which have both tags
   - Start your query with `t ` (including space): only **tabs** will be searched.
   - Start your query with `b ` (including space): only **bookmarks** will be searched.
   - Start your query with `h ` (including space): only **history** will be searched.
   - Start your query with `s ` (including space): only **search engines** will be proposed.
+  - Start your query with `#`: only **bookmarks with the tag** will be returned (exact "starts with" search)
+    - Add `  ` (double space) or press TAB to further search the results
+    - Supports AND search, e.g. search for `#github #pr` to only get results which have both tags
+  - Start your query with `~`: only **bookmarks within the folder** will be returned (exact "starts with" search)
+    - Add `  ` (double space) or press TAB to further search the results
+    - Supports AND search, e.g. search for `~Sites ~Blogs` to only get results which have both tags
   - Custom Aliases:
     - The option `customSearchEngines` allows you to define your own search mode aliases
     - Default: Start your query with `g ` (including space): Do a Google search.
@@ -73,6 +75,7 @@ This extension is built to respect your privacy:
 - This extension works best if you avoid:
   - using `#` in bookmark titles that do not indicate a tag.
   - using `~` in bookmark folder names.
+  - using ` ` (spaces) in tag names (ideally also folder names)
 
 ## User Configuration
 

@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+## [v1.10.0]
+
+- **NEW**: Search within a bookmark folder or tag:
+  - Now it is possible to further search
 - **FIXED**: If `debug: true` has been set, the extension crashed on a performance measurement analysis
 
 ## [v1.9.1]

@@ -38,14 +38,17 @@ export function simpleSearch(searchMode, searchTerm, preSelection) {
  * There is no real scoring, everything has base score of 1
  */
 function simpleSearchWithScoring(searchTerm, searchMode, preSelection) {
-  let data = ext.model[searchMode]
+  let data
 
   if (preSelection) {
-    data = data.filter((el) => {
+    data = ext.model[searchMode].filter((el) => {
       return preSelection[el.originalId]
     })
+    console.debug(`Pre-filtered search results from ${ext.model[searchMode].length} to ${data.length}`)
+  } else {
+    data = ext.model[searchMode]
   }
-  
+
   if (!data.length) {
     return [] // early return -> no data to search
   }

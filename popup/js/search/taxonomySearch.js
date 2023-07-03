@@ -12,12 +12,9 @@
  * @param {'tags' | 'folder'} taxonomyType
  */
 export function searchTaxonomy(searchTerm, taxonomyType, data) {
-
   if (ext.opts.debug) {
     performance.mark('search-taxonomy-start')
-    console.debug(
-      `🔍 Searching taxonomy of type="${taxonomyType}" searchTerm="${searchTerm}"`,
-    )
+    console.debug(`🔍 Searching taxonomy of type="${taxonomyType}" searchTerm="${searchTerm}"`)
   }
 
   /** Search results */
@@ -51,11 +48,7 @@ export function searchTaxonomy(searchTerm, taxonomyType, data) {
     performance.measure('search-taxonomy: ' + searchTerm, 'search-taxonomy-start', 'search-taxonomy-end')
     const searchPerformance = performance.getEntriesByType('measure')
     console.debug(
-      'Found ' +
-        results.length +
-        ' taxonomy results in ' +
-        searchPerformance[0].duration +
-        'ms',
+      'Found ' + results.length + ' taxonomy results in ' + searchPerformance[0].duration + 'ms',
       searchPerformance,
     )
     performance.clearMeasures()

@@ -45,12 +45,15 @@ export async function fuzzySearch(searchMode, searchTerm, preSelection) {
  * Execute a fuzzy search with additional scoring and highlighting of results
  */
 function fuzzySearchWithScoring(searchTerm, searchMode, preSelection) {
-  let data = ext.model[searchMode]
+  let data
 
   if (preSelection) {
-    data = data.filter((el) => {
+    data = ext.model[searchMode].filter((el) => {
       return preSelection[el.originalId]
     })
+    console.debug(`Pre-filtered search results from ${ext.model[searchMode].length} to ${data.length}`)
+  } else {
+    data = ext.model[searchMode]
   }
 
   if (!data.length) {
@@ -137,8 +140,8 @@ function fuzzySearchWithScoring(searchTerm, searchMode, preSelection) {
         s.idxs = idxs // Save idxs cache to state
       }
     } catch (err) {
-      err.message = 'Fuzzy search could not handle search term. Please try precise search instead.'
       console.error(err)
+      err.message = 'Fuzzy search could not handle search term. Please try precise search instead.'
       printError(err)
     }
 
