@@ -16,6 +16,7 @@ import { searchTaxonomy } from './taxonomySearch.js'
  * It will decide which approaches and indexes to use.
  */
 export async function search(event) {
+
   try {
     if (event) {
       // Don't execute search on navigation or modifier keys
@@ -100,22 +101,21 @@ export async function search(event) {
     if (searchTerm) {
       if (searchMode === 'tags' || searchMode === 'folder') {
         const splitSearchTerm = searchTerm.split('  ')
-        if (splitSearchTerm.length === 1 || splitSearchTerm[1].trim() === '') {
+        const taxonomySearchTerm = splitSearchTerm.shift()
+        const subSearchTerm = splitSearchTerm.join('').trim()
+        console.log(taxonomySearchTerm, subSearchTerm)
+        if (!subSearchTerm) {
           ext.model.result = searchTaxonomy(searchTerm, searchMode, ext.model.bookmarks)
         } else {
-          const taxonomyResults = searchTaxonomy(splitSearchTerm[0], searchMode, ext.model.bookmarks)
-          splitSearchTerm.shift()
+          const taxonomyResults = searchTaxonomy(taxonomySearchTerm, searchMode, ext.model.bookmarks)
           const preSelection = {}
           for (const el of taxonomyResults) {
             preSelection[el.originalId] = true
           }
-          ext.model.result = await searchWithAlgorithm(
-            ext.opts.searchStrategy,
-            splitSearchTerm.join('  ').trim(),
-            searchMode,
-            preSelection,
-          )
+          console.log('MODE 2')
+          ext.model.result = await searchWithAlgorithm(ext.opts.searchStrategy, subSearchTerm, searchMode, preSelection)
         }
+        
       } else if (ext.opts.searchStrategy === 'fuzzy') {
         ext.model.result.push(...(await searchWithAlgorithm('fuzzy', searchTerm, searchMode)))
       } else if (ext.opts.searchStrategy === 'precise') {

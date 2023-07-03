@@ -39,16 +39,18 @@ export function simpleSearch(searchMode, searchTerm, preSelection) {
  */
 function simpleSearchWithScoring(searchTerm, searchMode, preSelection) {
   let data = ext.model[searchMode]
+
+  if (preSelection) {
+    data = data.filter((el) => {
+      return preSelection[el.originalId]
+    })
+  }
+  
   if (!data.length) {
     return [] // early return -> no data to search
   }
 
   if (!state[searchMode]) {
-    if (preSelection) {
-      data = data.filter((el) => {
-        return preSelection[el.originalId]
-      })
-    }
     state[searchMode] = {
       cachedData: [...data],
     }

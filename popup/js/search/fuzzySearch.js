@@ -51,7 +51,6 @@ function fuzzySearchWithScoring(searchTerm, searchMode, preSelection) {
     data = data.filter((el) => {
       return preSelection[el.originalId]
     })
-    console.log(preSelection, data)
   }
 
   if (!data.length) {
@@ -139,6 +138,7 @@ function fuzzySearchWithScoring(searchTerm, searchMode, preSelection) {
       }
     } catch (err) {
       err.message = 'Fuzzy search could not handle search term. Please try precise search instead.'
+      console.error(err)
       printError(err)
     }
 

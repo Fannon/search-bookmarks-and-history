@@ -12,6 +12,14 @@
  * @param {'tags' | 'folder'} taxonomyType
  */
 export function searchTaxonomy(searchTerm, taxonomyType, data) {
+
+  if (ext.opts.debug) {
+    performance.mark('search-taxonomy-start')
+    console.debug(
+      `🔍 Searching taxonomy of type="${taxonomyType}" searchTerm="${searchTerm}"`,
+    )
+  }
+
   /** Search results */
   const results = []
   /** Marker for taxonomy search mode */
@@ -36,6 +44,21 @@ export function searchTaxonomy(searchTerm, taxonomyType, data) {
         })
       }
     }
+  }
+
+  if (ext.opts.debug) {
+    performance.mark('search-taxonomy-end')
+    performance.measure('search-taxonomy: ' + searchTerm, 'search-taxonomy-start', 'search-taxonomy-end')
+    const searchPerformance = performance.getEntriesByType('measure')
+    console.debug(
+      'Found ' +
+        results.length +
+        ' taxonomy results in ' +
+        searchPerformance[0].duration +
+        'ms',
+      searchPerformance,
+    )
+    performance.clearMeasures()
   }
 
   return results
