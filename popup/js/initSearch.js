@@ -1,3 +1,6 @@
+if (performance && performance.mark) {
+  performance.mark('init-start')
+}
 import { printError } from './helper/utils.js'
 import { extensionNamespace as ext } from './model/namespace.js'
 import { getEffectiveOptions } from './model/options.js'
@@ -29,7 +32,6 @@ export async function initExtension() {
   ext.opts = await getEffectiveOptions()
 
   if (ext.opts.debug) {
-    performance.mark('init-start')
     console.debug('Initialized with options', ext.opts)
   }
 
@@ -109,6 +111,8 @@ export async function hashRouter() {
         ext.dom.searchInput.value = decodeURIComponent(searchTerm)
       }
       ext.dom.searchInput.focus()
+
+      closeModals()
       search()
     } else if (hash.startsWith('#tags/')) {
       loadTagsOverview()

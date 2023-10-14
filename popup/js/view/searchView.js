@@ -203,6 +203,9 @@ export function navigationKeyListener(event) {
   } else if (event.key === 'Escape') {
     window.location.hash = '#search/'
     ext.dom.searchInput.focus()
+  } else if (event.key === 'Tab') {
+    ext.dom.searchInput.value = ext.dom.searchInput.value + '  '
+    event.preventDefault()
   }
 }
 
