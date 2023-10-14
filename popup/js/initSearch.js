@@ -111,7 +111,7 @@ export async function hashRouter() {
         ext.dom.searchInput.value = decodeURIComponent(searchTerm)
       }
       ext.dom.searchInput.focus()
-      
+
       closeModals()
       search()
     } else if (hash.startsWith('#tags/')) {
